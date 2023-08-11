@@ -45,7 +45,9 @@ fun RowScope.AddItem(
     }, selected = currentDestination?.hierarchy?.any {
         it.route == screen.route
     } == true, onClick = {
-        navController.navigate(screen.route)
+        navController.navigate(screen.route) {
+            launchSingleTop = true
+        }
     }, alwaysShowLabel = false
     )
 }

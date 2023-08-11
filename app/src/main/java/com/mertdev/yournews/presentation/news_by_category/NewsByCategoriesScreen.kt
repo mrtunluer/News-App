@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -19,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +39,8 @@ import com.mertdev.yournews.app.ui.theme.FontSize
 import com.mertdev.yournews.app.ui.theme.MyColor
 import com.mertdev.yournews.domain.model.Article
 import com.mertdev.yournews.presentation.common.ArticleItem
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -43,6 +49,7 @@ fun NewsByCategoriesScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoading = uiState.isLoading
+    val listState = rememberLazyListState()
     val categories = listOf("All").plus(uiState.selectedCategories)
     val pullRefreshState =
         rememberPullRefreshState(isLoading, onRefresh = viewModel::fetchNewsBySelectedCategories)
@@ -57,22 +64,10 @@ fun NewsByCategoriesScreen(
                 .padding(20.dp),
             horizontalAlignment = Alignment.Start,
         ) {
+            Header(listState = listState)
 
-            Text(
-                text = stringResource(R.string.discover),
-                fontFamily = FontFamily(Font(R.font.montserrat_bold)),
-                color = Color.Black,
-                fontSize = FontSize.Large
-            )
-
-            Text(
-                text = stringResource(R.string.discover_sub_title),
-                color = Color.Gray,
-                modifier = Modifier.padding(bottom = 20.dp),
-                fontSize = FontSize.Small
-            )
-
-            CategoriesRow(categories = categories,
+            CategoriesRow(listState = listState,
+                categories = categories,
                 currentCategory = currentCategory,
                 onCategoryClick = { category ->
                     currentCategory = category
@@ -82,7 +77,7 @@ fun NewsByCategoriesScreen(
 
             Spacer(modifier = Modifier.padding(10.dp))
 
-            ArticleList(uiState.articles)
+            ArticleList(listState, uiState.articles)
         }
         PullRefreshIndicator(isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
         when {
@@ -99,8 +94,8 @@ fun NewsByCategoriesScreen(
 }
 
 @Composable
-fun ArticleList(articles: List<Article>) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+fun ArticleList(listState: LazyListState, articles: List<Article>) {
+    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(articles.size) { i ->
             ArticleItem(articles[i])
         }
@@ -109,11 +104,15 @@ fun ArticleList(articles: List<Article>) {
 
 @Composable
 fun CategoriesRow(
-    categories: List<String>, currentCategory: String, onCategoryClick: (String) -> Unit
+    listState: LazyListState,
+    categories: List<String>,
+    currentCategory: String,
+    onCategoryClick: (String) -> Unit
 ) {
     LazyRow {
         items(categories.size) { index ->
             CategoryItem(
+                listState = listState,
                 categoryName = categories[index],
                 isSelected = categories[index] == currentCategory,
                 onClick = onCategoryClick
@@ -124,18 +123,46 @@ fun CategoriesRow(
 
 @Composable
 fun CategoryItem(
-    categoryName: String, isSelected: Boolean, onClick: (String) -> Unit
+    listState: LazyListState, categoryName: String, isSelected: Boolean, onClick: (String) -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Text(
-        text = categoryName,
-        modifier = Modifier
+        text = categoryName, modifier = Modifier
             .background(
                 if (isSelected) MyColor.Blue else Color.Transparent,
                 shape = RoundedCornerShape(40.dp)
             )
             .padding(horizontal = 14.dp, vertical = 8.dp)
-            .clickable { if (!isSelected) onClick(categoryName) },
-        color = if (isSelected) Color.White else Color.Gray,
-        fontSize = FontSize.Small
+            .clickable {
+                if (isSelected) coroutineScope.launch(Dispatchers.Main) {
+                    listState.animateScrollToItem(0)
+                } else onClick(categoryName)
+            }, color = if (isSelected) Color.White else Color.Gray, fontSize = FontSize.Small
     )
+}
+
+@Composable
+fun Header(listState: LazyListState) {
+    val coroutineScope = rememberCoroutineScope()
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(bottom = 20.dp)
+        .clickable {
+            coroutineScope.launch(Dispatchers.Main) {
+                listState.animateScrollToItem(0)
+            }
+        }) {
+        Text(
+            text = stringResource(R.string.discover),
+            fontFamily = FontFamily(Font(R.font.montserrat_bold)),
+            color = Color.Black,
+            fontSize = FontSize.Large
+        )
+        Text(
+            text = stringResource(R.string.discover_sub_title),
+            color = Color.Gray,
+            fontSize = FontSize.Small
+        )
+    }
 }
