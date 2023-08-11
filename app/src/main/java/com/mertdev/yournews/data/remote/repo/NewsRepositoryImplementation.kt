@@ -25,6 +25,27 @@ class NewsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getTopHeadlinesBySelectedCategory(category: String): Flow<Resource<List<Article>>> =
+        flow {
+            emit(Resource.Loading())
+            try {
+                val response = newsApiService.getTopHeadlinesBySelectedCategory(category)
+                emit(Resource.Success(response.articles.map { it.toDomainModel() }))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message.toString()))
+            }
+        }
+
+    override suspend fun searchNews(query: String): Flow<Resource<List<Article>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = newsApiService.searchNews(query)
+            emit(Resource.Success(response.articles.map { it.toDomainModel() }))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message.toString()))
+        }
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun getTopHeadlinesBySelectedCategories(categories: List<String>): Flow<Resource<List<Article>>> =
         flow {
@@ -42,15 +63,5 @@ class NewsRepositoryImpl @Inject constructor(
                 emit(Resource.Error(e.message.toString()))
             }
         }
-
-    override suspend fun searchNews(query: String): Flow<Resource<List<Article>>> = flow {
-        emit(Resource.Loading())
-        try {
-            val response = newsApiService.searchNews(query)
-            emit(Resource.Success(response.articles.map { it.toDomainModel() }))
-        } catch (e: Exception) {
-            emit(Resource.Error(e.message.toString()))
-        }
-    }
 }
 

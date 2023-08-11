@@ -87,8 +87,8 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
                 text = searchQuery.ifBlank { stringResource(R.string.breaking_news) },
                 modifier = Modifier
                     .align(Alignment.Start)
-                    .padding(bottom = 10.dp, top = 10.dp),
-                color = MyColor.Blue,
+                    .padding(vertical = 10.dp),
+                color = Color.Black,
                 fontFamily = FontFamily(Font(R.font.montserrat_bold))
             )
             ArticleList(columnArticles)

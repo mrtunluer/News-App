@@ -128,7 +128,7 @@ fun Header() {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = stringResource(R.string.title),
-                fontSize = FontSize.Large,
+                fontSize = FontSize.XLarge,
                 fontFamily = FontFamily(Font(R.font.montserrat_bold))
             )
             HyperlinkText(
