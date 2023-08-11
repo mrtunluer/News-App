@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">YourNews</string>
+    <string name="select_category">Select the categories you are interested in</string>
+    <string name="title">News App</string>
+    <string name="sub_title">Developed using the News API.</string>
+    <string name="link_text_sub_title">News API</string>
+    <string name="news_api_link">https://newsapi.org</string>
+    <string name="next">NEXT</string>
+    <string name="breaking_news">Breaking News</string>
+    <string name="non_exist_category">Choose at least one category</string>
+    <string name="select_category_alert">Choose at least 1 and at most 4 categories</string>
+</resources>
