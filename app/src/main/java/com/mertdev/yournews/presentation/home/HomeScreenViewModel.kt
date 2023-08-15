@@ -1,5 +1,8 @@
 package com.mertdev.yournews.presentation.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mertdev.yournews.domain.usecase.GetTopHeadlines
@@ -25,6 +28,8 @@ class HomeScreenViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<DataState> = MutableStateFlow(DataState())
     val uiState: StateFlow<DataState> = _uiState
 
+    var searchQuery by mutableStateOf("")
+
     private var job: Job? = null
 
     init {
@@ -39,18 +44,23 @@ class HomeScreenViewModel @Inject constructor(
                     when (resource) {
                         is Resource.Success -> uiState.value.copy(
                             articles = resource.data ?: emptyList(),
+                            searchedArticles = emptyList(),
                             errorMessage = null,
                             isLoading = false
                         )
 
                         is Resource.Error -> uiState.value.copy(
                             articles = emptyList(),
+                            searchedArticles = emptyList(),
                             errorMessage = resource.message.toString(),
                             isLoading = false
                         )
 
                         is Resource.Loading -> uiState.value.copy(
-                            articles = emptyList(), errorMessage = null, isLoading = true
+                            articles = emptyList(),
+                            searchedArticles = emptyList(),
+                            errorMessage = null,
+                            isLoading = true
                         )
                     }
                 }
@@ -58,27 +68,27 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    fun getSearchedNews(query: String) {
+    fun getSearchedNews() {
         job?.cancel()
         job = viewModelScope.launch(Dispatchers.IO) {
-            delay(300) // debounce
-            searchNews(query).collectLatest { resource ->
+            delay(300)
+            searchNews(searchQuery).collectLatest { resource ->
                 _uiState.update {
                     when (resource) {
                         is Resource.Success -> uiState.value.copy(
-                            articles = resource.data ?: emptyList(),
+                            searchedArticles = resource.data ?: emptyList(),
                             errorMessage = null,
                             isLoading = false
                         )
 
                         is Resource.Error -> uiState.value.copy(
-                            articles = emptyList(),
+                            searchedArticles = emptyList(),
                             errorMessage = resource.message.toString(),
                             isLoading = false
                         )
 
                         is Resource.Loading -> uiState.value.copy(
-                            articles = emptyList(), errorMessage = null, isLoading = true
+                            searchedArticles = emptyList(), errorMessage = null, isLoading = true
                         )
                     }
                 }

@@ -1,6 +1,7 @@
 package com.mertdev.yournews.presentation.common
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Category
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
@@ -19,6 +20,10 @@ sealed class Screen(
 
     object NewsByCategoriesScreen : Screen(
         route = "news_by_categories_screen", icon = Icons.Rounded.Category
+    )
+
+    object BookmarkScreen : Screen(
+        route = "bookmark_screen", icon = Icons.Rounded.Bookmark
     )
 
     object ProfileScreen : Screen(

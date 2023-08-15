@@ -30,9 +30,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,13 +54,21 @@ import com.mertdev.yournews.presentation.common.CustomAsyncImage
 fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState()
-    var searchQuery by remember { mutableStateOf("") }
     val isLoading = uiState.isLoading
-    val articles = uiState.articles
-    val pagerArticles = articles.take(5)
-    val columnArticles = articles.drop(5)
-    val pullRefreshState =
-        rememberPullRefreshState(isLoading, onRefresh = viewModel::getBreakingNews)
+
+    val pagerArticles = with(viewModel) {
+        if (searchQuery.isNotBlank()) uiState.searchedArticles.take(3)
+        else uiState.articles.take(3)
+    }
+    val columnArticles = with(viewModel) {
+        if (searchQuery.isNotBlank()) uiState.searchedArticles.drop(3)
+        else uiState.articles.drop(3)
+    }
+
+    val pullRefreshState = rememberPullRefreshState(
+        isLoading,
+        onRefresh = if (viewModel.searchQuery.isNotBlank()) viewModel::getSearchedNews else viewModel::getBreakingNews
+    )
 
     Box(
         Modifier
@@ -76,15 +81,11 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
                 .padding(vertical = 20.dp, horizontal = 30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            SearchBar(searchQuery, onSearchQueryChanged = {
-                searchQuery = it
-                if (searchQuery.isNotBlank()) viewModel.getSearchedNews(searchQuery)
-                else viewModel.getBreakingNews()
-            })
+            SearchBar(viewModel)
             Pager(pagerState, pagerArticles)
             PagerIndicator(pagerState, pagerArticles.size)
             Text(
-                text = searchQuery.ifBlank { stringResource(R.string.breaking_news) },
+                text = viewModel.searchQuery.ifBlank { stringResource(R.string.breaking_news) },
                 modifier = Modifier
                     .align(Alignment.Start)
                     .padding(vertical = 10.dp),
@@ -118,14 +119,17 @@ fun ArticleList(columnArticles: List<Article>) {
 
 @Composable
 fun SearchBar(
-    searchQuery: String, onSearchQueryChanged: (String) -> Unit
+    viewModel: HomeScreenViewModel
 ) {
     TextField(
         modifier = Modifier
             .background(color = Color.White)
             .fillMaxWidth(),
-        value = searchQuery,
-        onValueChange = { onSearchQueryChanged(it) },
+        value = viewModel.searchQuery,
+        onValueChange = { queryText ->
+            viewModel.searchQuery = queryText
+            viewModel.getSearchedNews()
+        },
         maxLines = 1,
         placeholder = { Text(text = "Search") },
         leadingIcon = {

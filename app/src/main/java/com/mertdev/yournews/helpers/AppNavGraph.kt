@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mertdev.yournews.presentation.bookmark.BookmarkScreen
 import com.mertdev.yournews.presentation.onboarding.CategorySelectionScreen
 import com.mertdev.yournews.presentation.home.HomeScreen
 import com.mertdev.yournews.presentation.news_by_category.NewsByCategoriesScreen
@@ -28,6 +29,9 @@ fun AppNavGraph(
         }
         composable(route = Screen.NewsByCategoriesScreen.route) {
             NewsByCategoriesScreen()
+        }
+        composable(route = Screen.BookmarkScreen.route) {
+            BookmarkScreen()
         }
         composable(route = Screen.ProfileScreen.route) {
             ProfileScreen()
