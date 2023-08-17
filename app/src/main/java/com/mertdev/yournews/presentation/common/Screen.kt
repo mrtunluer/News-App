@@ -29,4 +29,8 @@ sealed class Screen(
     object ProfileScreen : Screen(
         route = "profile_screen", icon = Icons.Rounded.Person
     )
+
+    object DetailScreen : Screen(
+        route = "detail_screen"
+    )
 }

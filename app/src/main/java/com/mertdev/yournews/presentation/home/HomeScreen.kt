@@ -43,15 +43,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.mertdev.yournews.R
 import com.mertdev.yournews.app.ui.theme.MyColor
 import com.mertdev.yournews.domain.model.Article
 import com.mertdev.yournews.presentation.common.ArticleItem
 import com.mertdev.yournews.presentation.common.CustomAsyncImage
+import com.mertdev.yournews.presentation.common.Screen
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
+fun HomeScreen(navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState()
     val isLoading = uiState.isLoading
@@ -92,7 +94,7 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
                 color = Color.Black,
                 fontFamily = FontFamily(Font(R.font.montserrat_bold))
             )
-            ArticleList(columnArticles)
+            ArticleList(navController, columnArticles)
         }
         PullRefreshIndicator(isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
         when {
@@ -109,10 +111,13 @@ fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun ArticleList(columnArticles: List<Article>) {
+fun ArticleList(navController: NavController, columnArticles: List<Article>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(columnArticles.size) { i ->
-            ArticleItem(columnArticles[i])
+            ArticleItem(columnArticles[i], onClicked = { article ->
+                navController.currentBackStackEntry?.savedStateHandle?.set("article", article)
+                navController.navigate(Screen.DetailScreen.route)
+            })
         }
     }
 }

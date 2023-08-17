@@ -34,18 +34,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.mertdev.yournews.R
 import com.mertdev.yournews.app.ui.theme.FontSize
 import com.mertdev.yournews.app.ui.theme.MyColor
 import com.mertdev.yournews.domain.model.Article
 import com.mertdev.yournews.presentation.common.ArticleItem
+import com.mertdev.yournews.presentation.common.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NewsByCategoriesScreen(
-    viewModel: NewsByCategoriesViewModel = hiltViewModel()
+    navController: NavController, viewModel: NewsByCategoriesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoading = uiState.isLoading
@@ -77,7 +79,7 @@ fun NewsByCategoriesScreen(
 
             Spacer(modifier = Modifier.padding(10.dp))
 
-            ArticleList(listState, uiState.articles)
+            ArticleList(navController, listState, uiState.articles)
         }
         PullRefreshIndicator(isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
         when {
@@ -94,10 +96,13 @@ fun NewsByCategoriesScreen(
 }
 
 @Composable
-fun ArticleList(listState: LazyListState, articles: List<Article>) {
+fun ArticleList(navController: NavController, listState: LazyListState, articles: List<Article>) {
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(articles.size) { i ->
-            ArticleItem(articles[i])
+            ArticleItem(articles[i], onClicked = { article ->
+                navController.currentBackStackEntry?.savedStateHandle?.set("article", article)
+                navController.navigate(Screen.DetailScreen.route)
+            })
         }
     }
 }

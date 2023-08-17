@@ -1,6 +1,7 @@
 package com.mertdev.yournews.presentation.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,13 +25,14 @@ import com.mertdev.yournews.domain.model.Article
 import com.mertdev.yournews.helpers.extension.convertToCustomDateFormat
 
 @Composable
-fun ArticleItem(article: Article) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(vertical = 10.dp)
-    ) {
+fun ArticleItem(article: Article, onClicked: (Article) -> Unit) {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White)
+        .padding(vertical = 10.dp)
+        .clickable {
+            onClicked(article)
+        }) {
         CustomAsyncImage(
             article.urlToImage ?: "",
             modifier = Modifier
