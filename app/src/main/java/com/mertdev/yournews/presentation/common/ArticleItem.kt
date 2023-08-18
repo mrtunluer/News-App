@@ -2,6 +2,7 @@ package com.mertdev.yournews.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -58,12 +59,21 @@ private fun ArticleContent(article: Article) = with(article) {
             overflow = TextOverflow.Ellipsis
         )
         Spacer(modifier = Modifier.padding(6.dp))
-        Text(
-            text = publishedAt?.convertToCustomDateFormat() ?: "",
-            fontSize = FontSize.Small,
+        Row(
             modifier = Modifier
-                .align(Alignment.End)
-                .padding(end = 10.dp)
-        )
+                .fillMaxWidth()
+                .align(Alignment.End),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text(
+                text = sourceName ?: "", fontSize = FontSize.Small
+            )
+
+            Spacer(modifier = Modifier.padding(10.dp))
+
+            Text(
+                text = publishedAt?.convertToCustomDateFormat() ?: "", fontSize = FontSize.Small
+            )
+        }
     }
 }

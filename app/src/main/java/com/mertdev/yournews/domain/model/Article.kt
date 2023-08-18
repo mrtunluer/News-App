@@ -1,15 +1,9 @@
 package com.mertdev.yournews.domain.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
 data class Article(
-    val author: String?,
-    val content: String?,
-    val description: String?,
+    val sourceName: String?,
     val publishedAt: String?,
     val title: String?,
     val url: String?,
     val urlToImage: String?
-) : Parcelable
+)
