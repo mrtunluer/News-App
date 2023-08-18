@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -34,20 +35,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.mertdev.yournews.R
 import com.mertdev.yournews.app.ui.theme.FontSize
 import com.mertdev.yournews.app.ui.theme.MyColor
 import com.mertdev.yournews.domain.model.Article
+import com.mertdev.yournews.helpers.openWebPage
 import com.mertdev.yournews.presentation.common.ArticleItem
-import com.mertdev.yournews.presentation.common.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NewsByCategoriesScreen(
-    navController: NavController, viewModel: NewsByCategoriesViewModel = hiltViewModel()
+    viewModel: NewsByCategoriesViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoading = uiState.isLoading
@@ -79,7 +79,7 @@ fun NewsByCategoriesScreen(
 
             Spacer(modifier = Modifier.padding(10.dp))
 
-            ArticleList(navController, listState, uiState.articles)
+            ArticleList(listState, uiState.articles)
         }
         PullRefreshIndicator(isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
         when {
@@ -96,12 +96,12 @@ fun NewsByCategoriesScreen(
 }
 
 @Composable
-fun ArticleList(navController: NavController, listState: LazyListState, articles: List<Article>) {
+fun ArticleList(listState: LazyListState, articles: List<Article>) {
+    val context = LocalContext.current
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(articles.size) { i ->
-            ArticleItem(articles[i], onClicked = { article ->
-                navController.currentBackStackEntry?.savedStateHandle?.set("article", article)
-                navController.navigate(Screen.DetailScreen.route)
+            ArticleItem(articles[i], onClicked = { url ->
+                openWebPage(context = context, url = url)
             })
         }
     }

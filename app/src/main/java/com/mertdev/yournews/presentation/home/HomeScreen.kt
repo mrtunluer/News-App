@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -43,17 +44,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.mertdev.yournews.R
 import com.mertdev.yournews.app.ui.theme.MyColor
 import com.mertdev.yournews.domain.model.Article
+import com.mertdev.yournews.helpers.openWebPage
 import com.mertdev.yournews.presentation.common.ArticleItem
 import com.mertdev.yournews.presentation.common.CustomAsyncImage
-import com.mertdev.yournews.presentation.common.Screen
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavController, viewModel: HomeScreenViewModel = hiltViewModel()) {
+fun HomeScreen(viewModel: HomeScreenViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState()
     val isLoading = uiState.isLoading
@@ -94,7 +94,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeScreenViewModel = hi
                 color = Color.Black,
                 fontFamily = FontFamily(Font(R.font.montserrat_bold))
             )
-            ArticleList(navController, columnArticles)
+            ArticleList(columnArticles)
         }
         PullRefreshIndicator(isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
         when {
@@ -111,12 +111,12 @@ fun HomeScreen(navController: NavController, viewModel: HomeScreenViewModel = hi
 }
 
 @Composable
-fun ArticleList(navController: NavController, columnArticles: List<Article>) {
+fun ArticleList(columnArticles: List<Article>) {
+    val context = LocalContext.current
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(columnArticles.size) { i ->
-            ArticleItem(columnArticles[i], onClicked = { article ->
-                navController.currentBackStackEntry?.savedStateHandle?.set("article", article)
-                navController.navigate(Screen.DetailScreen.route)
+            ArticleItem(columnArticles[i], onClicked = { url ->
+                openWebPage(context = context, url = url)
             })
         }
     }

@@ -37,7 +37,7 @@ import com.mertdev.yournews.app.ui.theme.FontSize
 import com.mertdev.yournews.domain.usecase.SaveSelectedCategories
 import com.mertdev.yournews.helpers.Constants
 import com.mertdev.yournews.helpers.extension.navigateAndClearBackStack
-import com.mertdev.yournews.helpers.hyperlink_text.HyperlinkText
+import com.mertdev.yournews.helpers.HyperlinkText
 import com.mertdev.yournews.presentation.common.LottieAnim
 import com.mertdev.yournews.presentation.common.Screen
 

@@ -1,4 +1,4 @@
-package com.mertdev.yournews.helpers.hyperlink_text
+package com.mertdev.yournews.helpers
 
 import android.content.Intent
 import android.net.Uri

@@ -25,13 +25,15 @@ import com.mertdev.yournews.domain.model.Article
 import com.mertdev.yournews.helpers.extension.convertToCustomDateFormat
 
 @Composable
-fun ArticleItem(article: Article, onClicked: (Article) -> Unit) {
+fun ArticleItem(article: Article, onClicked: (String) -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .background(Color.White)
         .padding(vertical = 10.dp)
         .clickable {
-            onClicked(article)
+            article.url?.let {
+                onClicked(it)
+            }
         }) {
         CustomAsyncImage(
             article.urlToImage ?: "",
