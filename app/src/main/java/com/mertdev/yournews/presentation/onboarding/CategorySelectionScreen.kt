@@ -190,12 +190,16 @@ private fun CollectSaveEvent(
     event?.let { saveEvent ->
         LaunchedEffect(key1 = saveEvent) {
             when (saveEvent) {
-                is SaveSelectedCategories.SaveEvent.GoHome -> navController.navigateAndClearBackStack(
+                is SaveSelectedCategories.SaveEvent.ShowErrorMessage -> Toast.makeText(
+                    context,
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                else -> navController.navigateAndClearBackStack(
                     route = Screen.HomeScreen.route,
                     popUpToRoute = Screen.CategorySelectionScreen.route
                 )
-
-                else -> Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

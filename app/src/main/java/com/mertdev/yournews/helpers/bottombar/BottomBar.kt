@@ -21,7 +21,6 @@ fun BottomBar(
     val screens = listOf(
         Screen.HomeScreen,
         Screen.NewsByCategoriesScreen,
-        Screen.BookmarkScreen,
         Screen.ProfileScreen
     )
 

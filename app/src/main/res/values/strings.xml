@@ -10,5 +10,6 @@
     <string name="discover">Discover</string>
     <string name="discover_sub_title">News by categories you follow</string>
     <string name="non_exist_category">Choose at least one category</string>
+    <string name="success_selection">Your Category Selection Has Been Updated</string>
     <string name="select_category_alert">Choose at least 1 and at most 4 categories</string>
 </resources>

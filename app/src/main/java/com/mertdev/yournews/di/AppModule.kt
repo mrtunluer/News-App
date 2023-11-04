@@ -1,22 +1,15 @@
 package com.mertdev.yournews.di
 
-import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.room.Room
 import com.mertdev.yournews.BuildConfig
-import com.mertdev.yournews.data.local.data_source.SavedArticleDao
-import com.mertdev.yournews.data.local.data_source.SavedArticleDatabase
-import com.mertdev.yournews.data.local.data_source.SavedArticleDatabase.Companion.DB_NAME
 import com.mertdev.yournews.data.remote.NewsApiService
 import com.mertdev.yournews.data.local.repo.CategoryRepositoryImpl
-import com.mertdev.yournews.data.local.repo.SavedArticleRepositoryImpl
 import com.mertdev.yournews.data.remote.repo.NewsRepositoryImpl
 import com.mertdev.yournews.domain.repo.CategoryRepository
 import com.mertdev.yournews.domain.repo.NewsRepository
-import com.mertdev.yournews.domain.repo.SavedArticleRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,26 +70,6 @@ object AppModule {
         return Retrofit.Builder().baseUrl("https://newsapi.org/v2/").client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(NewsApiService::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun provideSavedArticleDatabase(app: Application): SavedArticleDatabase {
-        return Room.databaseBuilder(app, SavedArticleDatabase::class.java, DB_NAME).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideSavedArticleDao(db: SavedArticleDatabase): SavedArticleDao {
-        return db.savedArticleDao
-    }
-
-    @Provides
-    @Singleton
-    fun provideSavedArticleRepo(
-        dao: SavedArticleDao
-    ): SavedArticleRepository {
-        return SavedArticleRepositoryImpl(dao)
     }
 
 }

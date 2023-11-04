@@ -9,8 +9,9 @@ class SaveSelectedCategories @Inject constructor(
     private val repo: CategoryRepository
 ) {
     sealed class SaveEvent {
-        object GoHome : SaveEvent()
-        object ShowMessage: SaveEvent()
+        object ShowErrorMessage : SaveEvent()
+        object ShowSuccessMessage : SaveEvent()
+
     }
 
     private val _eventFlow = MutableSharedFlow<SaveEvent>()
@@ -19,9 +20,9 @@ class SaveSelectedCategories @Inject constructor(
     suspend operator fun invoke(categories: List<String>) {
         if (categories.isNotEmpty()) {
             repo.saveSelectedCategories(categories)
-            _eventFlow.emit(SaveEvent.GoHome)
-        }else{
-            _eventFlow.emit(SaveEvent.ShowMessage)
+            _eventFlow.emit(SaveEvent.ShowSuccessMessage)
+        } else {
+            _eventFlow.emit(SaveEvent.ShowErrorMessage)
         }
     }
 }
