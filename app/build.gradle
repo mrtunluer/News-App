@@ -54,8 +54,6 @@ android {
 }
 
 dependencies {
-    def room_version = "2.5.2"
-
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
@@ -89,10 +87,6 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
 
     implementation "com.airbnb.android:lottie-compose:4.2.0"
-
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
