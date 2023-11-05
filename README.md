@@ -1,7 +1,7 @@
 # News App
 News App is an android application that adopts the Mvvm design pattern and is developed with a clean architecture approach.
 ## ScreenShots
-![newsappss](https://github.com/mrtunluer/News-App/assets/75806927/eece32a9-d23a-4d2e-9688-a011e13bfaa9)
+![newsappss](https://github.com/mrtunluer/News-App/assets/75806927/1497b970-fdff-4121-bfac-de9693b9ecb8)
 #### Used Api -> https://newsapi.org
 ## Libraries And Technology Used
 - <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a> - Jetpack Compose is Android’s recommended modern toolkit for building native UI.
